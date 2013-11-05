@@ -1,2 +1,0 @@
-ScarlettSDK-Android
-===================
