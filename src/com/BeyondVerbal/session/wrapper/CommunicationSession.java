@@ -1,10 +1,10 @@
 package com.BeyondVerbal.session.wrapper;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.BeyondVerbal.comm.BlockingInputStream;
 import com.BeyondVerbal.comm.CommLayer;
 import com.BeyondVerbal.comm.data.request.DataFormat;
 import com.BeyondVerbal.comm.data.request.PersonInfo;
@@ -103,7 +103,7 @@ public class CommunicationSession implements StartRecordListener, UpdateListList
 		recordingVoice.write(buffer);
 	}
 	
-*/	public void stopSession(String baseUrl, String apiKey, byte[] buffer) {
+*/	public void stopSession(String baseUrl, String apiKey) {
 
 		if (timer != null) {
 			timer.cancel();
@@ -232,7 +232,7 @@ public class CommunicationSession implements StartRecordListener, UpdateListList
 		}
 	}
 
-	void analyze(BlockingInputStream stream) {
+	void analyze(InputStream stream) {
 		recordingVoice = new RecordingVoiceRequest(upStream, stream);
 		recordingVoice.open();
 		

@@ -1,6 +1,8 @@
 package com.BeyondVerbal.comm;
 
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -17,7 +19,7 @@ public class StreamingSocket implements Runnable{
 	}
 	
 	protected static final String LOGTAG = "NGStreamingSocket";
-	private BlockingInputStream inputStream;
+	private InputStream inputStream;
 	
 	protected String path;
 	
@@ -27,7 +29,7 @@ public class StreamingSocket implements Runnable{
 //	public StreamingSocket() {
 //	}
 
-	public StreamingSocket(BlockingInputStream inputStream) {
+	public StreamingSocket(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
 

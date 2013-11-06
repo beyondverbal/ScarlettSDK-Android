@@ -1,15 +1,13 @@
 package com.BeyondVerbal.session.wrapper;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
-import com.BeyondVerbal.comm.BlockingInputStream;
 import com.BeyondVerbal.comm.data.request.DataFormat;
 import com.BeyondVerbal.comm.data.request.PersonInfo;
 import com.BeyondVerbal.comm.data.response.AnalysisSegment;
 import com.BeyondVerbal.comm.data.response.DualValue;
 import com.BeyondVerbal.session.wrapper.CommunicationSession.OnCommunicationSessionListener;
-import com.BeyondVerbal.session.wrapper.EmotionAnalyser.SessionInitListener;
-
 import android.app.Service;
 import android.content.Context;
 import android.os.Build;
@@ -50,24 +48,9 @@ public class Session implements OnCommunicationSessionListener {
 	private static final int SAMPLE_RATE = 8000;
 	private static final int CHANNELS = 1;
 	private static final int BITS_PER_SAMPLE = 16;
-	private static final int BYTES_PER_SAMPLE = 2;
 	private static final String BASE_URL = "https://beta.beyondverbal.com/v1";
-	private static final int BUFFER_SIZE_IN_SECONDS = 20;
-	private static final int INITIAL_BUFFER_LIMIT = SAMPLE_RATE * BYTES_PER_SAMPLE * BUFFER_SIZE_IN_SECONDS;
-	private static final int MAX_SECONDS = 5;
-	private static final int MAX_BUFFER_SIZE = MAX_SECONDS * SAMPLE_RATE * BYTES_PER_SAMPLE;
 	private TelephonyManager telephony;
-	private ArrayList<byte[]> initialBuffer;
-	private int initialBufferSize;
-	private byte[] wavHeader;
-	private byte[] voiceBuffer;
-	private boolean recordingStarted;
-	private boolean firstPacket;
-	
-	
-
 	private SessionListener sessionListener;
-	private Context context;
 	private String apiKey;
 
 	/**
@@ -89,7 +72,6 @@ public class Session implements OnCommunicationSessionListener {
 
 	Session(Context context, String apiKey, OnSessionInitListener sessionInitListener) {
 		this.sessionInitListener = sessionInitListener;
-		this.context = context;
 		this.apiKey = apiKey;
 
 
@@ -98,12 +80,7 @@ public class Session implements OnCommunicationSessionListener {
 		analysisPollingInterval = DEFAULT_POLLING_INTERVAL;
 		
 		commSession = new CommunicationSession(context, analysisPollingInterval);
-		recordingStarted = false;
-		firstPacket = true;
 		initData();
-		voiceBuffer = new byte[MAX_BUFFER_SIZE];
-		
-		
 	}
 
 	private void initData() {
@@ -133,24 +110,17 @@ public class Session implements OnCommunicationSessionListener {
 
 	
 	boolean Start() {
-		recordingStarted = false;
-		firstPacket = true;
-		initialBuffer = new ArrayList<byte[]>();
-		
 		commListener = new CommListener();
 		commSession.setListener(commListener);
 		commSession.setSessionListener(this);
 		commSession.startSession(BASE_URL, apiKey, dataFormat, recorderInfo, analysisTypes);
 
-		voiceBuffer = new byte[MAX_BUFFER_SIZE];
-		
 		return true;
 	}
 
 	public boolean Stop() {
 		
-		commSession.stopSession(BASE_URL, apiKey, voiceBuffer);
-		recordingStarted = false;
+		commSession.stopSession(BASE_URL, apiKey);
 		return true;
 	}
 
@@ -239,7 +209,7 @@ public class Session implements OnCommunicationSessionListener {
 		this.subjectInfo = subjectInfo;
 	}
 
-	public void analyze(BlockingInputStream stream) {
+	public void analyze(InputStream stream) {
 		commSession.analyze(stream);
 	}
 	

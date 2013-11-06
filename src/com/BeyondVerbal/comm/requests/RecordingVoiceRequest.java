@@ -1,13 +1,14 @@
 package com.BeyondVerbal.comm.requests;
 
-import com.BeyondVerbal.comm.BlockingInputStream;
+import java.io.InputStream;
+
 import com.BeyondVerbal.comm.StreamingSocket;
 
 public class RecordingVoiceRequest extends StreamingSocket {
 
 	protected String streamUrl;
 
-	public RecordingVoiceRequest(String streamUrl, BlockingInputStream inputStream) {
+	public RecordingVoiceRequest(String streamUrl, InputStream inputStream) {
 		super(inputStream);
 		this.streamUrl = streamUrl;
 	}
